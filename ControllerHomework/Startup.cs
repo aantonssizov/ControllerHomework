@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ControllerHomework.Models;
+using System.Text.Json.Serialization;
 
 namespace ControllerHomework
 {
@@ -28,10 +29,14 @@ namespace ControllerHomework
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<BooksDbContext>(options => 
+            services.AddDbContext<BooksDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("Books")));
 
-            services.AddControllers();
+            services.AddControllers().AddJsonOptions(x =>
+            {
+                x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+                x.JsonSerializerOptions.WriteIndented = true;
+            });
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "ControllerHomework", Version = "v1" });

@@ -15,11 +15,22 @@ namespace ControllerHomework.Controllers
     public class BookController : ControllerBase
     {
         private readonly BooksDbContext _context;
+        private readonly ILogger<BookController> _logger;
 
-        public BookController(BooksDbContext context)
+        public BookController(BooksDbContext context, ILogger<BookController> logger)
         {
             _context = context;
+            _logger = logger;
         }
+
+        [HttpGet]
+        public ActionResult<IEnumerable<Book>> Get([FromHeader] int genreId) 
+        {
+            if (genreId == 0)
+                return Ok(_context.Books.ToList());
+
+            return Ok(_context.Books.Include(i => i.Genre).Where(i => i.GenreId == genreId));
+        } 
 
         [HttpGet]
         [Route("{id}")]
@@ -60,7 +71,7 @@ namespace ControllerHomework.Controllers
         }
 
         [HttpPut]
-        [Route("{id}/{newName}")]
+        [Route("{id}")]
         public IActionResult UpdateBookName(int id, string newName)
         {
             var book = _context.Books.Where(b => b.Id == id).FirstOrDefault();
