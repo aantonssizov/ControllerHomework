@@ -27,7 +27,7 @@ namespace ControllerHomework.Controllers
         public ActionResult<IEnumerable<Book>> Get([FromHeader] int genreId) 
         {
             if (genreId == 0)
-                return Ok(_context.Books.ToList());
+                return Ok(_context.Books);
 
             return Ok(_context.Books.Include(i => i.Genre).Where(i => i.GenreId == genreId));
         } 
