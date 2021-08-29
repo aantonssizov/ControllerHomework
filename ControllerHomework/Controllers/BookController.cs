@@ -80,6 +80,11 @@ namespace ControllerHomework.Controllers
                 return NotFound();
             }
 
+            if (newName == null)
+            {
+                return BadRequest("newName can't be empty");
+            }
+
             book.Name = newName;
 
             _context.SaveChanges();
