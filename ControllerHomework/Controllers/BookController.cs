@@ -1,12 +1,10 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using ControllerHomework.DTO;
+using ControllerHomework.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using ControllerHomework.Models;
 
 namespace ControllerHomework.Controllers
 {
@@ -24,13 +22,13 @@ namespace ControllerHomework.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<Book>> Get([FromHeader] int genreId) 
+        public ActionResult<IEnumerable<Book>> Get([FromHeader] int genreId)
         {
             if (genreId == 0)
                 return Ok(_context.Books);
 
             return Ok(_context.Books.Include(i => i.Genre).Where(i => i.GenreId == genreId));
-        } 
+        }
 
         [HttpGet]
         [Route("{id}")]
@@ -46,9 +44,13 @@ namespace ControllerHomework.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateBook(Book book)
+        public IActionResult CreateBook(dtoBook book)
         {
-            _context.Books.Add(book);
+            var entityBook = new Book();
+
+            book.Map(entityBook);
+
+            _context.Books.Add(entityBook);
             _context.SaveChanges();
 
             return Ok();

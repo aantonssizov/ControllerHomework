@@ -1,18 +1,15 @@
-using Microsoft.EntityFrameworkCore;
+using ControllerHomework.DTO;
+using ControllerHomework.Models;
+using ControllerHomework.Validation;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using ControllerHomework.Models;
 using System.Text.Json.Serialization;
 
 namespace ControllerHomework
@@ -32,11 +29,16 @@ namespace ControllerHomework
             services.AddDbContext<BooksDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("Books")));
 
-            services.AddControllers().AddJsonOptions(x =>
-            {
-                x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
-                x.JsonSerializerOptions.WriteIndented = true;
-            });
+            services.AddControllers()
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+                    options.JsonSerializerOptions.WriteIndented = true;
+                })
+                .AddFluentValidation();
+
+            services.AddTransient<IValidator<dtoBook>, BookValidator>();
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "ControllerHomework", Version = "v1" });
